@@ -20,6 +20,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\UI\Common\Point.cpp" />
+    <ClCompile Include="Source\UI\Common\Rect.cpp" />
+    <ClCompile Include="Source\UI\Common\Size.cpp" />
+    <ClCompile Include="Source\UI\Common\UIView.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\UI\Common\Enum\EnumMouseClickKind.h" />
+    <ClInclude Include="Source\UI\Common\Point.h" />
+    <ClInclude Include="Source\UI\Common\Rect.h" />
+    <ClInclude Include="Source\UI\Common\Size.h" />
+    <ClInclude Include="Source\UI\Common\UIView.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{050C6C8B-405B-4DD0-811D-670EE132FE52}</ProjectGuid>
