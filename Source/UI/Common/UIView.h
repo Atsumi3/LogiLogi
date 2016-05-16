@@ -1,13 +1,17 @@
 #pragma once
 #include "Rect.h"
-#include "Enum/EnumMouseClickKind.h"
 #include <DxLib.h>
 #include <vector>
+#include "../Enum/EnumMouseClickKind.h"
 
 // いろいろなViewのベースとなるView
 class UIView
 {
 public:
+	virtual ~UIView()
+	{
+	}
+
 	///////////// View ///////////////
 	// 親View
 	UIView* parent = nullptr;
@@ -41,7 +45,7 @@ public:
 	// マウスにクリックされているか(右も左も)
 	bool isMouseClicking = false;
 	// マウスクリックの種類
-	EnumMouseClickKind mouseClickingKind = NONE;
+	EnumMouseClickKind mouseClickingKind = EnumMouseClickKindNONE;
 	//////////////////////////////////
 
 	///////// コンストラクタ /////////
@@ -76,10 +80,11 @@ public:
 	// マウスのクリックが終わった時
 	void setOnMouseClickEndCallback(void(*endMouseClickCallback)(UIView*, EnumMouseClickKind));
 	//////////////////////////////////
-
 protected:
+
 	// 描画関数
-	void Draw() const;
+	virtual void Draw() const;
+	void BackDraw() const;
 
 private:
 	////// 前フレームの状態保持 //////

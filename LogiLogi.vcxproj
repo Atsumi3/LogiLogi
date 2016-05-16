@@ -24,15 +24,18 @@
     <ClCompile Include="Source\UI\Common\Rect.cpp" />
     <ClCompile Include="Source\UI\Common\Size.cpp" />
     <ClCompile Include="Source\UI\Common\UIView.cpp" />
+    <ClCompile Include="Source\UI\UIPictCell.cpp" />
     <ClCompile Include="Source\UI\Util\UIUtil.cpp" />
     <ClCompile Include="Source\Util\FpsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\UI\Common\Enum\EnumMouseClickKind.h" />
+    <ClInclude Include="Source\UI\Enum\EnumMouseClickKind.h" />
     <ClInclude Include="Source\UI\Common\Point.h" />
     <ClInclude Include="Source\UI\Common\Rect.h" />
     <ClInclude Include="Source\UI\Common\Size.h" />
     <ClInclude Include="Source\UI\Common\UIView.h" />
+    <ClInclude Include="Source\UI\Enum\EnumPictCellState.h" />
+    <ClInclude Include="Source\UI\UIPictCell.h" />
     <ClInclude Include="Source\UI\Util\UIUtil.h" />
     <ClInclude Include="Source\Util\FpsManager.h" />
   </ItemGroup>

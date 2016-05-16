@@ -15,6 +15,7 @@ void UIView::Update()
 {
 	this->UpdateRelativeParent();
 	if (!hidden && (!parent || parent && !parent->hidden)) {
+		this->BackDraw();
 		this->CheckMouseOver();
 		this->CheckMouseClick();
 		this->Draw();
@@ -71,7 +72,7 @@ void UIView::setOnMouseClickEndCallback(void(*endMouseClickCallback)(UIView*, En
 }
 
 // 描画処理
-void UIView::Draw() const
+void UIView::BackDraw() const
 {
 	// 背景描画
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, backgroundAlpha);
@@ -79,6 +80,11 @@ void UIView::Draw() const
 		relativeFrame.minX(), relativeFrame.minY(),
 		relativeFrame.maxX(), relativeFrame.maxY(), backgroundColor);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+void UIView::Draw() const
+{
+	printf("");
 }
 
 //////////////////////////////////
@@ -159,16 +165,16 @@ void UIView::CheckMouseClick()
 			this->endMouseClickCallback(this, mouseClickingKind);
 		}
 		isMouseClickBeforeFrame = false;
-		mouseClickingKind = EnumMouseClickKind::NONE;
+		mouseClickingKind = EnumMouseClickKindNONE;
 		return;
 	}
 	// マウスにクリックされているか 且つ マウスが上にあるか
 	int Mouse = GetMouseInput();
 	this->mouseClickingKind =
-		Mouse & MOUSE_INPUT_LEFT ? EnumMouseClickKind::LEFT :
-		Mouse & MOUSE_INPUT_RIGHT ? EnumMouseClickKind::RIGHT :
-		Mouse & MOUSE_INPUT_MIDDLE ? EnumMouseClickKind::CENTER : EnumMouseClickKind::NONE;
-	this->isMouseClicking = mouseClickingKind != EnumMouseClickKind::NONE;
+		Mouse & MOUSE_INPUT_LEFT ? EnumMouseClickKindLEFT :
+		Mouse & MOUSE_INPUT_RIGHT ? EnumMouseClickKindRIGHT :
+		Mouse & MOUSE_INPUT_MIDDLE ? EnumMouseClickKindCENTER : EnumMouseClickKindNONE;
+	this->isMouseClicking = mouseClickingKind != EnumMouseClickKindNONE;
 
 	if (this->isMouseClicking)
 	{ // クリックされている

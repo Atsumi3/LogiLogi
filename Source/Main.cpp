@@ -2,6 +2,7 @@
 #include "UI/Common/Size.h"
 #include "UI/Common/UIView.h"
 #include "Util/FpsManager.h"
+#include "UI/UIPictCell.h"
 
 const Size windowSize = Size(640, 480);
 
@@ -18,7 +19,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	FpsManager fpsManager;
 
 	// 表示するビュー
-	UIView view = UIView(Rect(16, 16, 100, 50));
+	UIView view = UIView(Rect(0, 0, 100, 100));
+
+	UIPictCell cel = UIPictCell(Rect(25, 25, 50, 50));
+	cel.backgroundColor = 0xE0E0E0;
+	view.addSubView(&cel);
 
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 		fpsManager.Update();
