@@ -1,4 +1,4 @@
-#include "DxLib.h"
+Ôªø#include "DxLib.h"
 #include "UI/Common/Size.h"
 #include "UI/Common/UIView.h"
 #include "Util/FpsManager.h"
@@ -17,7 +17,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	FpsManager fpsManager;
 
-	// ï\é¶Ç∑ÇÈÉrÉÖÅ[
+	// Ë°®Á§∫„Åô„Çã„Éì„É•„Éº
 	UIView view = UIView(Rect(16, 16, 100, 50));
 
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
