@@ -2,6 +2,34 @@
 #include <algorithm>
 #include "Util/UIUtil.h"
 
+vector<int> UIPictPanel::rToVec(vector<int> r) const
+{
+	vector<int> arr;
+	int renzoku = 0;
+	for (int i = 0; i < r.size(); i++)
+	{
+		if (r[i] == 0)
+		{
+			if (renzoku > 0)
+			{
+				arr.push_back(renzoku);
+				renzoku = 0;
+			}
+		}
+		else
+		{
+			renzoku += 1;
+		}
+	}
+	if (renzoku > 0)
+	{
+		arr.push_back(renzoku);
+		renzoku = 0;
+	}
+
+	return arr;
+}
+
 void UIPictPanel::Draw()
 {
 	// --------------------- セルを塗る -------------------
@@ -35,11 +63,13 @@ void UIPictPanel::Draw()
 		this->GlobalMouseInfo->resetDragging();
 	}
 
+	// マウスがどのセルの上にもいなかったらリセット
 	if (!isExistHoveringView)
 	{
 		GlobalMouseInfo->resetHovering();
 	}
 
+	// ドラッグ中だったら暗くする
 	if(this->GlobalMouseInfo->draggingDirection != EnumMouseDragDirectionNONE)
 	{
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);

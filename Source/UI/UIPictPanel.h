@@ -10,6 +10,8 @@ class UIPictPanel : public UIView
 private:
 	void Init();
 	void DrawLayerBorder() const;
+
+	vector<int> rToVec(vector<int> r) const;
 public:
 
 	// 周りの枠線の太さ
@@ -50,6 +52,5 @@ public:
 	virtual ~UIPictPanel()
 	{
 	}
-
 	void Draw() override;
 };
