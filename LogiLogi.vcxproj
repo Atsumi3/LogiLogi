@@ -19,25 +19,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\System\GameManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\UI\Common\Point.cpp" />
     <ClCompile Include="Source\UI\Common\Rect.cpp" />
     <ClCompile Include="Source\UI\Common\Size.cpp" />
     <ClCompile Include="Source\UI\Common\UIView.cpp" />
     <ClCompile Include="Source\UI\UIPictCell.cpp" />
+    <ClCompile Include="Source\UI\UIPictPanel.cpp" />
     <ClCompile Include="Source\UI\Util\UIUtil.cpp" />
     <ClCompile Include="Source\Util\FpsManager.cpp" />
+    <ClCompile Include="Source\Util\MathUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\System\GameManager.h" />
+    <ClInclude Include="Source\Global.h" />
+    <ClInclude Include="Source\System\MouseInfo.h" />
     <ClInclude Include="Source\UI\Enum\EnumMouseClickKind.h" />
     <ClInclude Include="Source\UI\Common\Point.h" />
     <ClInclude Include="Source\UI\Common\Rect.h" />
     <ClInclude Include="Source\UI\Common\Size.h" />
     <ClInclude Include="Source\UI\Common\UIView.h" />
+    <ClInclude Include="Source\UI\Enum\EnumMouseDragDirection.h" />
     <ClInclude Include="Source\UI\Enum\EnumPictCellState.h" />
     <ClInclude Include="Source\UI\UIPictCell.h" />
+    <ClInclude Include="Source\UI\UIPictPanel.h" />
     <ClInclude Include="Source\UI\Util\UIUtil.h" />
     <ClInclude Include="Source\Util\FpsManager.h" />
+    <ClInclude Include="Source\Util\MathUtil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\back\bg001.jpg" />
+    <Image Include="data\font\number001.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{050C6C8B-405B-4DD0-811D-670EE132FE52}</ProjectGuid>

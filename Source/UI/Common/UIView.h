@@ -82,8 +82,8 @@ public:
 	//////////////////////////////////
 protected:
 
-	// •`‰æŠÖ”
-	virtual void Draw() const;
+	// •`‰æŠÖ”  •’Ê‚Íconst‚É‚µ‚Ä.. ŒvZ‚Í•Ê‚Ì‚Æ‚±‚ë‚Å‚â‚é‚×‚«B
+	virtual void Draw();
 	void BackDraw() const;
 
 private:

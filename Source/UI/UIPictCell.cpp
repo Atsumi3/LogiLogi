@@ -10,6 +10,10 @@ void UIPictCell::Init()
 void UIPictCell::onOverWhileCallback(UIView* view)
 {
 	UIPictCell* cell = static_cast<UIPictCell *>(view);
+	if(!cell->isSelectBorderEnable)
+	{
+		return;
+	}
 	const int borderLineColor = cell->borderColor;
 	const int middleBorderLineColor = cell->borderColor - 0x101010;
 	// 上の横線
@@ -145,14 +149,31 @@ void UIPictCell::onClickBeginCallback(UIView* view, EnumMouseClickKind clickKind
 	}
 }
 
-UIPictCell::UIPictCell(Rect rect) : UIView(rect)
+void UIPictCell::drawFillFrame(int Color) const
 {
-	this->Init();
+	DrawBox(relativeFrame.minX(), relativeFrame.minY(), relativeFrame.maxX(), relativeFrame.maxY(), Color, TRUE);
 }
 
-void UIPictCell::Draw() const
+void UIPictCell::setCellIndex(int row, int col)
+{
+	this->cellIndexRow = row;
+	this->cellIndexCol = col;
+}
+
+void UIPictCell::Draw()
 {
 	Point p;
+
+	// 交互に背景色を変える
+	if ((cellIndexRow + cellIndexCol) % 2 == 0)
+	{
+		this->drawFillFrame(0xdbffdb);
+	}
+	else
+	{
+		this->drawFillFrame(0xffdbff);
+	}
+
 	switch(this->state)
 	{
 	case EnumPictCellStateNONE: break;
@@ -162,6 +183,8 @@ void UIPictCell::Draw() const
 
 		DrawLine(this->relativeFrame.minX(), this->relativeFrame.maxY(),
 			this->relativeFrame.maxX(), this->relativeFrame.minY(), GetColor(0, 0, 0));
+
+		this->drawFillFrame(selectedColor);
 		break;
 	case EnumPictCellStateKEEP: 
 		p = UIUtil::CalcAlignCenterText(this->relativeFrame, "×");

@@ -82,7 +82,7 @@ void UIView::BackDraw() const
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-void UIView::Draw() const
+void UIView::Draw()
 {
 	printf("");
 }

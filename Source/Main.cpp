@@ -1,35 +1,26 @@
 ﻿#include "DxLib.h"
-#include "UI/Common/Size.h"
-#include "UI/Common/UIView.h"
+#include "Global.h"
 #include "Util/FpsManager.h"
-#include "UI/UIPictCell.h"
-
-const Size windowSize = Size(640, 480);
+#include "System/GameManager.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	SetGraphMode(windowSize.width, windowSize.height, 32);
+	SetGraphMode(GAME_SIZE.width, GAME_SIZE.height, 32);
 	SetAlwaysRunFlag(TRUE);
-	SetBackgroundColor(0, 0, 0);
+	SetBackgroundColor(255, 255, 255);
 	ChangeWindowMode(true);
 
 	if (DxLib_Init() == -1) return -1;
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	FpsManager fpsManager;
+	GameManager gameManager;
 
 	// 表示するビュー
-	UIView view = UIView(Rect(0, 0, 100, 100));
-
-	UIPictCell cel = UIPictCell(Rect(25, 25, 50, 50));
-	cel.backgroundColor = 0xE0E0E0;
-	view.addSubView(&cel);
 
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 		fpsManager.Update();
-
-		view.Update();
-
+		gameManager.Draw();
 		fpsManager.Wait();
 	}
 
