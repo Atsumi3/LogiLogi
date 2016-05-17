@@ -8,16 +8,16 @@ public:
 	// マウスをドラッグしている行
 	int draggingRow = -1;
 	int draggingCol = -1;
-	bool pressedRight = false;
-	EnumMouseClickKind draggingState = EnumMouseClickKindNONE;
+	bool pressingRight = false;
+	EnumPictCellState draggingState = EnumPictCellStateNONE;
 	EnumMouseDragDirection draggingDirection = EnumMouseDragDirectionNONE;
 
 	void reset()
 	{
-		pressedRight = false;
+		pressingRight = false;
 		draggingCol = -1;
 		draggingRow = -1;
-		draggingState = EnumMouseClickKindNONE;
+		draggingState = EnumPictCellStateNONE;
 		draggingDirection = EnumMouseDragDirectionNONE;
 	}
 };

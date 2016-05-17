@@ -4,14 +4,58 @@
 void UIPictPanel::Draw()
 {
 	// --------------------- セルを塗る -------------------
+	bool isExistTappingView = false;
 	for (int row = 0; row < rowPanelNum; row++)
 	{
 		for (int col = 0; col < colPanelNum; col++)
 		{
+			// セルのアップデート(描画)
 			this->panelGroup[row][col].Update();
+
+			// タップしているビューがあるかチェック
+			if (!isExistTappingView) {
+				isExistTappingView = this->panelGroup[row][col].isMouseClicking;
+			}
 		}
 	}
 
+	// タップしているビューが無かったらマウス情報をリセット
+	if (!isExistTappingView)
+	{
+		this->GlobalMouseInfo->reset();
+	}
+
+	DrawLayerBorder();
+}
+
+void UIPictPanel::Init()
+{
+	if (GlobalMouseInfo) {
+		GlobalMouseInfo->reset();
+	}
+	const int big = 
+		this->relativeFrame.size.width > this->relativeFrame.size.height ?
+		this->relativeFrame.size.height : this->relativeFrame.size.width;
+
+	this->panelSizeRect = big / (colPanelNum > rowPanelNum ?  colPanelNum : rowPanelNum);
+
+	this->panelGroup = vector<vector<UIPictCell>>(rowPanelNum, vector<UIPictCell>(colPanelNum));
+	for (int i = 0; i< rowPanelNum; i++)
+	{
+		for (int k = 0; k < colPanelNum; k++)
+		{
+			const int posX = this->relativeFrame.minX() + (i * panelSizeRect);
+			const int posY = this->relativeFrame.minY() + (k * panelSizeRect);
+			UIPictCell p = UIPictCell(Rect(posX, posY, panelSizeRect, panelSizeRect));
+			p.setCellIndex(i, k);
+			p.GlobalMouseInfo = this->GlobalMouseInfo;
+			this->panelGroup[i][k] = p;
+		}
+	}
+}
+
+void UIPictPanel::DrawLayerBorder() const
+{
 	// 外枠
 	int lineColor = 0x000000;
 	const int maxX = this->relativeFrame.minX() + rowPanelNum * panelSizeRect + 1;
@@ -21,7 +65,7 @@ void UIPictPanel::Draw()
 	DrawLine(this->relativeFrame.minX() - (roundBorderWidth / 2),
 		this->relativeFrame.minY(),
 		maxX + (roundBorderWidth / 2),
-		this->relativeFrame.minY(), 
+		this->relativeFrame.minY(),
 		lineColor, roundBorderWidth);
 
 	// 左縦線
@@ -55,29 +99,6 @@ void UIPictPanel::Draw()
 
 			DrawLine(posX, this->relativeFrame.minY(), posX, maxY, lineColor, i % 5 == 0 ? roundBorderWidth / 2 : roundBorderWidth / 4);
 			DrawLine(this->relativeFrame.minX(), posY, maxX, posY, lineColor, k % 5 == 0 ? roundBorderWidth / 2 : roundBorderWidth / 4);
-		}
-	}
-}
-
-void UIPictPanel::Init()
-{
-	const int big = 
-		this->relativeFrame.size.width > this->relativeFrame.size.height ?
-		this->relativeFrame.size.height : this->relativeFrame.size.width;
-
-	this->panelSizeRect = big / (colPanelNum > rowPanelNum ?  colPanelNum : rowPanelNum);
-
-	this->panelGroup = vector<vector<UIPictCell>>(rowPanelNum, vector<UIPictCell>(colPanelNum));
-	for (int i = 0; i< rowPanelNum; i++)
-	{
-		for (int k = 0; k < colPanelNum; k++)
-		{
-			const int posX = this->relativeFrame.minX() + (i * panelSizeRect);
-			const int posY = this->relativeFrame.minY() + (k * panelSizeRect);
-			UIPictCell p = UIPictCell(Rect(posX, posY, panelSizeRect, panelSizeRect));
-			p.setCellIndex(i, k);
-			p.GlobalMouseInfo = this->GlobalMouseInfo;
-			this->panelGroup[i][k] = p;
 		}
 	}
 }

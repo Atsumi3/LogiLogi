@@ -113,38 +113,74 @@ void UIPictCell::onOverWhileCallback(UIView* view)
 void UIPictCell::onClickBeginCallback(UIView* view, EnumMouseClickKind clickKind)
 {
 	UIPictCell* cell = static_cast<UIPictCell *>(view);
-	if (clickKind == EnumMouseClickKindRIGHT)
+
+	if (cell->state != EnumPictCellStateNONE && cell->state != EnumPictCellStateKEEP && cell->state != EnumPictCellStateQUESTION)
 	{
-		switch (cell->state)
+	} else {
+		// 左クリック
+		if (clickKind == EnumMouseClickKindLEFT)
 		{
-		case EnumPictCellStateNONE: 
-			cell->state = EnumPictCellStateKEEP;
-			break;
-		case EnumPictCellStateKEEP:
-			cell->state = EnumPictCellStateQUESTION; 
-			break;
-		case EnumPictCellStateQUESTION:
-			cell->state = EnumPictCellStateNONE;
-			break;
-		default: break;
-		}
-	} else if(clickKind == EnumMouseClickKindLEFT)
-	{
-		switch (cell->state)
+			// 正解だったらOPEN 違ったらCLOSE
+			cell->state = cell->isPoint ? EnumPictCellStateOPEN : EnumPictCellStateEND;
+		} else if (clickKind == EnumMouseClickKindRIGHT)
 		{
-		case EnumPictCellStateNONE: 
-			cell->state = EnumPictCellStateOPEN;
-			break;
-		case EnumPictCellStateOPEN:
-			cell->state = EnumPictCellStateNONE;
-			break;
-		case EnumPictCellStateKEEP:
-			cell->state = EnumPictCellStateOPEN;
-			break;
-		case EnumPictCellStateQUESTION: 
-			cell->state = EnumPictCellStateOPEN;
-			break;
-		default: break;
+			// 右クリック
+			if (!cell->GlobalMouseInfo->pressingRight)
+			{
+				// 初めて右クリックを始めた時
+				cell->GlobalMouseInfo->pressingRight = true;
+				EnumPictCellState newState =
+					cell->state == EnumPictCellStateNONE ? EnumPictCellStateKEEP :
+					cell->state == EnumPictCellStateKEEP ? EnumPictCellStateQUESTION :
+					cell->state == EnumPictCellStateQUESTION ? EnumPictCellStateNONE : EnumPictCellStateNONE;
+				cell->state = newState;
+
+				cell->GlobalMouseInfo->draggingState = newState;
+				cell->GlobalMouseInfo->draggingCol = cell->cellIndexCol;
+				cell->GlobalMouseInfo->draggingRow = cell->cellIndexRow;
+			} else
+			{
+				// 既に右クリックされてる時
+				if(cell->cellIndexCol == cell->GlobalMouseInfo->draggingCol && cell->cellIndexRow == cell->GlobalMouseInfo->draggingRow ||
+					cell->cellIndexCol != cell->GlobalMouseInfo->draggingCol && cell->cellIndexRow != cell->GlobalMouseInfo->draggingRow)
+				{
+				} else
+				{
+					// 開始時とどっちかの座標が違うとき
+					switch(cell->GlobalMouseInfo->draggingDirection)
+					{
+					case EnumMouseDragDirectionNONE: 
+						// はじめてのドラッグ
+						if (cell->cellIndexCol != cell->GlobalMouseInfo->draggingCol && cell->cellIndexRow == cell->GlobalMouseInfo->draggingRow)
+						{
+							cell->GlobalMouseInfo->draggingDirection = EnumMouseDragDirectionVERTICAL;
+						} else if (cell->cellIndexCol == cell->GlobalMouseInfo->draggingCol && cell->cellIndexRow != cell->GlobalMouseInfo->draggingRow)
+						{
+							cell->GlobalMouseInfo->draggingDirection = EnumMouseDragDirectionHORIZONTAL;
+						}
+						cell->state = cell->GlobalMouseInfo->draggingState;
+						break;
+					case EnumMouseDragDirectionHORIZONTAL: 
+						// 横に移動している場合
+						if (cell->cellIndexCol == cell->GlobalMouseInfo->draggingCol && cell->cellIndexRow != cell->GlobalMouseInfo->draggingRow)
+						{
+							cell->state = cell->GlobalMouseInfo->draggingState;
+						}
+						break;
+					case EnumMouseDragDirectionVERTICAL: 
+						// 縦に移動してる場合
+						if (cell->cellIndexCol != cell->GlobalMouseInfo->draggingCol && cell->cellIndexRow == cell->GlobalMouseInfo->draggingRow)
+						{
+							cell->state = cell->GlobalMouseInfo->draggingState;
+						}
+						break;
+					default: break;
+					}
+				}
+			}
+		} else
+		{
+			cell->GlobalMouseInfo->reset();
 		}
 	}
 }
@@ -174,16 +210,11 @@ void UIPictCell::Draw()
 		this->drawFillFrame(0xffdbff);
 	}
 
+	// それぞれのセルの状態の時の表示
 	switch(this->state)
 	{
 	case EnumPictCellStateNONE: break;
-	case EnumPictCellStateOPEN: 
-		DrawLine(this->relativeFrame.minX(), this->relativeFrame.minY(),
-			this->relativeFrame.maxX(), this->relativeFrame.maxY(), GetColor(0, 0, 0));
-
-		DrawLine(this->relativeFrame.minX(), this->relativeFrame.maxY(),
-			this->relativeFrame.maxX(), this->relativeFrame.minY(), GetColor(0, 0, 0));
-
+	case EnumPictCellStateOPEN:
 		this->drawFillFrame(selectedColor);
 		break;
 	case EnumPictCellStateKEEP: 
@@ -195,8 +226,7 @@ void UIPictCell::Draw()
 		DrawString(p.x, p.y, "？", GetColor(0, 0, 0));
 		break;
 	case EnumPictCellStateEND:
-		p = UIUtil::CalcAlignCenterText(this->relativeFrame, "");
-		DrawString(p.x, p.y, "？", GetColor(0, 0, 0));
+		this->drawFillFrame(0x808080);
 		break;
 	default: break;
 	}

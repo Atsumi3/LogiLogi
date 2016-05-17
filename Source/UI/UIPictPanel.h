@@ -9,6 +9,7 @@ class UIPictPanel : public UIView
 {
 private:
 	void Init();
+	void DrawLayerBorder() const;
 public:
 
 	// 周りの枠線の太さ

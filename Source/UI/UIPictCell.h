@@ -14,10 +14,8 @@ private:
 	static void onClickBeginCallback(UIView* view, EnumMouseClickKind clickKind);
 	// 背景色を塗る
 	void drawFillFrame(int Color) const;
+
 public:
-	virtual ~UIPictCell()
-	{
-	}
 	// MouseInfo
 	MouseInfo* GlobalMouseInfo = nullptr;
 
@@ -49,6 +47,9 @@ public:
 		this->Init();
 	}
 
+	virtual ~UIPictCell()
+	{
+	}
 	void setCellIndex(int row, int col);
 
 	void Draw() override;
