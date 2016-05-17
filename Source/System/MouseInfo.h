@@ -12,12 +12,22 @@ public:
 	EnumPictCellState draggingState = EnumPictCellStateNONE;
 	EnumMouseDragDirection draggingDirection = EnumMouseDragDirectionNONE;
 
-	void reset()
+	void resetDragging()
 	{
 		pressingRight = false;
 		draggingCol = -1;
 		draggingRow = -1;
 		draggingState = EnumPictCellStateNONE;
 		draggingDirection = EnumMouseDragDirectionNONE;
+	}
+
+	// マウスがセルの上にある状態
+	int hoveringRow = -1;
+	int hoveringCol = -1;
+
+	void resetHovering()
+	{
+		hoveringCol = -1;
+		hoveringRow = -1;
 	}
 };

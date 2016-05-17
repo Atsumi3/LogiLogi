@@ -1,10 +1,12 @@
 ﻿#include "UIPictPanel.h"
 #include <algorithm>
+#include "Util/UIUtil.h"
 
 void UIPictPanel::Draw()
 {
 	// --------------------- セルを塗る -------------------
 	bool isExistTappingView = false;
+	bool isExistHoveringView = false;
 	for (int row = 0; row < rowPanelNum; row++)
 	{
 		for (int col = 0; col < colPanelNum; col++)
@@ -16,23 +18,97 @@ void UIPictPanel::Draw()
 			if (!isExistTappingView) {
 				isExistTappingView = this->panelGroup[row][col].isMouseClicking;
 			}
+
+			// マウスの下にセルがあるかチェック
+			if (!isExistHoveringView && this->panelGroup[row][col].isMouseOver)
+			{
+				isExistHoveringView = true;
+				GlobalMouseInfo->hoveringCol = col;
+				GlobalMouseInfo->hoveringRow = row;
+			}
 		}
 	}
 
 	// タップしているビューが無かったらマウス情報をリセット
 	if (!isExistTappingView)
 	{
-		this->GlobalMouseInfo->reset();
+		this->GlobalMouseInfo->resetDragging();
+	}
+
+	if (!isExistHoveringView)
+	{
+		GlobalMouseInfo->resetHovering();
+	}
+
+	if(this->GlobalMouseInfo->draggingDirection != EnumMouseDragDirectionNONE)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		if(this->GlobalMouseInfo->draggingDirection == EnumMouseDragDirectionHORIZONTAL)
+		{
+			// 横にドラッグしてる時
+			// ドラッグしている行以外の行に黒いマスクをつける
+			
+			// 上のボックス
+			DrawBox(relativeFrame.minX(),
+				relativeFrame.minY(),
+				relativeFrame.maxX(),
+				relativeFrame.minY() + (GlobalMouseInfo->draggingCol) * this->panelSizeRect, GetColor(20, 20, 20), TRUE);
+			// 下のボックス
+			DrawBox(relativeFrame.minX(),
+				relativeFrame.minY() + (GlobalMouseInfo->draggingCol + 1) * this->panelSizeRect,
+				relativeFrame.maxX(),
+				relativeFrame.maxY()
+				, GetColor(20, 20, 20), TRUE);
+		} else if (this->GlobalMouseInfo->draggingDirection == EnumMouseDragDirectionVERTICAL)
+		{
+			// 縦にドラッグしてる時
+			// ドラッグしている列以外の列に黒いマスクをつける
+
+			// 左のボックス
+			DrawBox(relativeFrame.minX(),
+				relativeFrame.minY(),
+				relativeFrame.minX() + GlobalMouseInfo->draggingRow * this->panelSizeRect,
+				relativeFrame.maxY(), GetColor(20, 20, 20), TRUE);
+
+			// 右のボックス
+			DrawBox(relativeFrame.minX() + (GlobalMouseInfo->draggingRow + 1) * this->panelSizeRect,
+				relativeFrame.minY(),
+				relativeFrame.maxX(),
+				relativeFrame.maxY(), GetColor(20, 20, 20), TRUE);
+		}
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	if(GlobalMouseInfo->hoveringCol > -1)
+	{
+		// 横
+		Rect r = Rect(
+			relativeFrame.minX() - panelSizeRect, 
+			relativeFrame.minY() + (GlobalMouseInfo->hoveringCol * panelSizeRect), panelSizeRect, panelSizeRect);
+		Point p = UIUtil::CalcAlignCenterText(r, "x");
+		DrawString(p.x, p.y, "x", GetColor(0, 0, 0));
+
+
+		Rect r2 = Rect(
+			relativeFrame.minX() + GlobalMouseInfo->hoveringRow * panelSizeRect, 
+			relativeFrame.minY() - panelSizeRect, 
+			panelSizeRect, panelSizeRect);
+		Point p2 = UIUtil::CalcAlignCenterText(r2, "y");
+		DrawString(p2.x, p2.y, "y", GetColor(0, 0, 0));
 	}
 
 	DrawLayerBorder();
 }
 
+// セルパネルの初期化
 void UIPictPanel::Init()
 {
+	// マウス情報の初期化
 	if (GlobalMouseInfo) {
-		GlobalMouseInfo->reset();
+		GlobalMouseInfo->resetDragging();
 	}
+
+	// セル描画のためにさいずを図ってる
 	const int big = 
 		this->relativeFrame.size.width > this->relativeFrame.size.height ?
 		this->relativeFrame.size.height : this->relativeFrame.size.width;

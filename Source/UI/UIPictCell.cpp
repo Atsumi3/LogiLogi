@@ -180,7 +180,7 @@ void UIPictCell::onClickBeginCallback(UIView* view, EnumMouseClickKind clickKind
 			}
 		} else
 		{
-			cell->GlobalMouseInfo->reset();
+			cell->GlobalMouseInfo->resetDragging();
 		}
 	}
 }
