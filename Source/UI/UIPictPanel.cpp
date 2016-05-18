@@ -1,6 +1,7 @@
 ﻿#include "UIPictPanel.h"
 #include <algorithm>
 #include "Util/UIUtil.h"
+#include "../Global.h"
 
 vector<int> UIPictPanel::rToVec(vector<int> r) const
 {
@@ -28,6 +29,12 @@ vector<int> UIPictPanel::rToVec(vector<int> r) const
 	}
 
 	return arr;
+}
+
+void UIPictPanel::UpdateFontSize(int fontSize)
+{
+	this->fontSize = fontSize;
+	this->font = CreateFontToHandle(NULL, fontSize, 1);
 }
 
 void UIPictPanel::Draw()
@@ -58,21 +65,21 @@ void UIPictPanel::Draw()
 	}
 
 	// タップしているビューが無かったらマウス情報をリセット
-	if (!isExistTappingView)
+	if (!isExistTappingView && GlobalMouseInfo)
 	{
-		this->GlobalMouseInfo->resetDragging();
+		GlobalMouseInfo->resetDragging();
 	}
 
 	// マウスがどのセルの上にもいなかったらリセット
-	if (!isExistHoveringView)
+	if (!isExistHoveringView && GlobalMouseInfo)
 	{
 		GlobalMouseInfo->resetHovering();
 	}
 
 	// ドラッグ中だったら暗くする
-	if(this->GlobalMouseInfo->draggingDirection != EnumMouseDragDirectionNONE)
+	if(GlobalMouseInfo && this->GlobalMouseInfo->draggingDirection != EnumMouseDragDirectionNONE)
 	{
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 50);
 		if(this->GlobalMouseInfo->draggingDirection == EnumMouseDragDirectionHORIZONTAL)
 		{
 			// 横にドラッグしてる時
@@ -109,23 +116,73 @@ void UIPictPanel::Draw()
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
-	if(GlobalMouseInfo->hoveringCol > -1)
+	// よこ
+	for (int row = 0; row < rowPanelNum; row++)
 	{
-		// 横
-		Rect r = Rect(
-			relativeFrame.minX() - panelSizeRect, 
-			relativeFrame.minY() + (GlobalMouseInfo->hoveringCol * panelSizeRect), panelSizeRect, panelSizeRect);
-		Point p = UIUtil::CalcAlignCenterText(r, "x");
-		DrawString(p.x, p.y, "x", GetColor(0, 0, 0));
-
-
-		Rect r2 = Rect(
-			relativeFrame.minX() + GlobalMouseInfo->hoveringRow * panelSizeRect, 
-			relativeFrame.minY() - panelSizeRect, 
-			panelSizeRect, panelSizeRect);
-		Point p2 = UIUtil::CalcAlignCenterText(r2, "y");
-		DrawString(p2.x, p2.y, "y", GetColor(0, 0, 0));
+		vector<int> r = vector<int>(this->colPanelNum, 0);
+		for (int col = 0; col < colPanelNum; col++)
+		{
+			r[col] = panelGroup[row][col].isPoint ? 1 : 0;
+		}
+		vector<int> arr = rToVec(r);
+		char const* str = "---";
+		const int marginBottom = 4;
+		const int bW = relativeFrame.minX() + (row * panelSizeRect);
+		const int w = int(bW + (bW + panelSizeRect - bW) / 2 - GetDrawStringWidthToHandle(str, strlen(str), font) / 2);
+		if (arr.size() == 0)
+		{
+			DrawFormatStringToHandle(w, relativeFrame.minY() - marginBottom - fontSize, countColor, font, "%2d", 0);
+		}
+		else {
+			for (int i = 0; i < arr.size(); i++)
+			{
+				DrawFormatStringToHandle(w, relativeFrame.minY() - marginBottom - fontSize * (i + 1), countColor, font, "%2d", arr[arr.size() - (i + 1)]);
+			}
+		}
 	}
+
+	// たて
+	for (int col = 0; col < colPanelNum; col++)
+	{
+		vector<int> r = vector<int>(this->rowPanelNum, 0);
+		for (int row = 0; row < rowPanelNum; row++)
+		{
+			r[row] = panelGroup[row][col].isPoint ? 1 : 0;
+		}
+		vector<int> arr = rToVec(r);
+		char const* str = "---";
+		const int marginBottom = 4;
+		const int bW = relativeFrame.minY() + (col * panelSizeRect);
+		const int w = int(bW + (bW + panelSizeRect - bW) / 2 - GetDrawStringWidthToHandle(str, strlen(str), font) / 2);
+		if (arr.size() == 0)
+		{
+			DrawFormatStringToHandle(relativeFrame.minX() - marginBottom - fontSize, w, countColor, font, "%2d", 0);
+		}
+		else {
+			for (int i = 0; i < arr.size(); i++)
+			{
+				DrawFormatStringToHandle(relativeFrame.minX() - marginBottom - fontSize * (i + 1), w, countColor, font, "%2d", arr[arr.size() - (i + 1)]);
+			}
+		}
+	}
+
+//	if(GlobalMouseInfo->hoveringCol > -1)
+//	{
+//		// 横
+//		Rect r = Rect(
+//			relativeFrame.minX() - panelSizeRect, 
+//			relativeFrame.minY() + (GlobalMouseInfo->hoveringCol * panelSizeRect), panelSizeRect, panelSizeRect);
+//		Point p = UIUtil::CalcAlignCenterText(r, "x");
+//		DrawString(p.x, p.y, "x", GetColor(0, 0, 0));
+//
+//
+//		Rect r2 = Rect(
+//			relativeFrame.minX() + GlobalMouseInfo->hoveringRow * panelSizeRect, 
+//			relativeFrame.minY() - panelSizeRect, 
+//			panelSizeRect, panelSizeRect);
+//		Point p2 = UIUtil::CalcAlignCenterText(r2, "y");
+//		DrawString(p2.x, p2.y, "y", GetColor(0, 0, 0));
+//	}
 
 	DrawLayerBorder();
 }
@@ -145,6 +202,8 @@ void UIPictPanel::Init()
 
 	this->panelSizeRect = big / (colPanelNum > rowPanelNum ?  colPanelNum : rowPanelNum);
 
+	this->UpdateFontSize(this->panelSizeRect / 2);
+
 	this->panelGroup = vector<vector<UIPictCell>>(rowPanelNum, vector<UIPictCell>(colPanelNum));
 	for (int i = 0; i< rowPanelNum; i++)
 	{
@@ -155,9 +214,11 @@ void UIPictPanel::Init()
 			UIPictCell p = UIPictCell(Rect(posX, posY, panelSizeRect, panelSizeRect));
 			p.setCellIndex(i, k);
 			p.GlobalMouseInfo = this->GlobalMouseInfo;
+			p.isPoint = GetRand(100) % 3 == 0;
 			this->panelGroup[i][k] = p;
 		}
 	}
+	this->font = CreateFontToHandle("メイリオ", fontSize, 1);
 }
 
 void UIPictPanel::DrawLayerBorder() const

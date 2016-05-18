@@ -2,16 +2,19 @@
 #include "../Util/MathUtil.h"
 #include "../Global.h"
 
-GameManager::GameManager()
+void GameManager::Init()
 {
 	const int margin = 16;
-	const int smaller = MathUtil::smaller(GAME_SIZE.width, GAME_SIZE.height) / 2;
-	
-	PictPanel = UIPictPanel(&GlobalMouseInfo, Rect(
-		GAME_SIZE.width - smaller - margin,
-		GAME_SIZE.height - smaller - margin,
-		smaller, 
-		smaller));
+	const int smaller = MathUtil::smaller(GAME_SIZE.width, GAME_SIZE.height) / 1.5;
+
+	float ratio = 4;
+	int wid = this->relativeFrame.minY() + this->relativeFrame.size.width / 4;
+	int hgt = this->relativeFrame.minY() + this->relativeFrame.size.height / 4;
+		
+	PictPanel = UIPictPanel(&GlobalMouseInfo, 
+		Rect(wid, hgt,
+		this->relativeFrame.maxX() - wid,
+		this->relativeFrame.maxY() - hgt ));
 }
 
 void GameManager::Draw()

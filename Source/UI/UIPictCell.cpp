@@ -203,11 +203,11 @@ void UIPictCell::Draw()
 	// 交互に背景色を変える
 	if ((cellIndexRow + cellIndexCol) % 2 == 0)
 	{
-		this->drawFillFrame(0xdbffdb);
+		this->drawFillFrame(0xeeccee);
 	}
 	else
 	{
-		this->drawFillFrame(0xffdbff);
+		this->drawFillFrame(0xcceecc);
 	}
 
 	// それぞれのセルの状態の時の表示

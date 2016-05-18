@@ -2,15 +2,23 @@
 #include "../UI/UIPictPanel.h"
 #include "MouseInfo.h"
 
-class GameManager
+class GameManager : public UIView
 {
+private:
+	void Init();
 public:
-
 	MouseInfo GlobalMouseInfo;
 
 	UIPictPanel PictPanel;
 
-	void Draw();
+	void Draw() override;
 
-	GameManager();
+	GameManager()
+	{
+		Init();
+	}
+	GameManager(Rect rect) : UIView(rect)
+	{
+		Init();
+	}
 };

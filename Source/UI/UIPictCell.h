@@ -30,7 +30,7 @@ public:
 	bool isPoint = false;
 
 	// 選択中の色
-	int selectedColor = 0xffbf7f;
+	int selectedColor = 0xF4A460;
 
 	// 選択中の線を表示するかどうか
 	bool isSelectBorderEnable = false;

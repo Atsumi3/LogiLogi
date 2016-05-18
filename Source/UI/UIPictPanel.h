@@ -12,10 +12,12 @@ private:
 	void DrawLayerBorder() const;
 
 	vector<int> rToVec(vector<int> r) const;
+
+	void UpdateFontSize(int fontSize);
 public:
 
-	// 周りの枠線の太さ
-	int roundBorderWidth = 4;
+	// 周りの枠線の太さ Global.hへ
+//	int roundBorderWidth = 4;
 	// 周りの枠線の色
 	int roundBorderColor = 0x202020;
 
@@ -23,6 +25,12 @@ public:
 	int rowPanelNum = 10;
 	// 縦パネルの数
 	int colPanelNum = 10;
+	// フォントサイズ
+	int fontSize = 15;
+	// フォント
+	int font = 0;
+	// 文字色
+	int countColor = 0x303030;
 
 	// パネルの縦横幅
 	int panelSizeRect = 0;

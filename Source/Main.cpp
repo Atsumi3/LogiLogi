@@ -7,20 +7,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	SetGraphMode(GAME_SIZE.width, GAME_SIZE.height, 32);
 	SetAlwaysRunFlag(TRUE);
-	SetBackgroundColor(255, 255, 255);
+	SetBackgroundColor(0, 0, 0);
 	ChangeWindowMode(true);
 
 	if (DxLib_Init() == -1) return -1;
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	FpsManager fpsManager;
-	GameManager gameManager;
+	GameManager gameManager = GameManager(Rect(50, 50, 400, 400));
+	gameManager.backgroundColor = 0xA0A0A0;
 
 	// 表示するビュー
-
 	while (ScreenFlip() == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0) {
 		fpsManager.Update();
-		gameManager.Draw();
+		gameManager.Update();
 		fpsManager.Wait();
 	}
 
